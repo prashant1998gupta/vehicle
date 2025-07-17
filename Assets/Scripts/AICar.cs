@@ -2,7 +2,12 @@ using UnityEngine;
 
 public class AICar : MonoBehaviour
 {
-    public float speed = 10f;
+    private float speed = 10f;
+
+    public void SetSpeed(float newSpeed)
+    {
+        speed = newSpeed;
+    }
 
     void Update()
     {

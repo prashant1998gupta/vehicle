@@ -383,7 +383,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 1434495054}
   offset: {x: 0, y: 2, z: -5}
-  smoothSpeed: 0.125
+  followSpeed: 10
+  rotationSpeed: 5
 --- !u!1 &427319474 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8087672166195191023, guid: c6f1bc070b168ed40a16017f50868ec3, type: 3}
@@ -679,16 +680,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   carPrefabs:
+  - {fileID: 7343561980795897270, guid: 6eb45c819c843b541bc0686c9013f6f8, type: 3}
+  - {fileID: 7343561980795897270, guid: ad1bd9f0f02016e4f81a9c397935a6f0, type: 3}
+  - {fileID: 7343561980795897270, guid: ab3093ca048b666498aef24bf96d707c, type: 3}
+  - {fileID: 7343561980795897270, guid: cb0ad9ce574495047a3fe91bcc02ceb3, type: 3}
   - {fileID: 7343561980795897270, guid: 6632fa6da1f742f4f82b943651004d13, type: 3}
-  - {fileID: 7343561980795897270, guid: 6632fa6da1f742f4f82b943651004d13, type: 3}
-  - {fileID: 7343561980795897270, guid: 6632fa6da1f742f4f82b943651004d13, type: 3}
-  - {fileID: 7343561980795897270, guid: 6632fa6da1f742f4f82b943651004d13, type: 3}
-  - {fileID: 7343561980795897270, guid: 6632fa6da1f742f4f82b943651004d13, type: 3}
+  poolSize: 20
+  carSpeedMin: 6
+  carSpeedMax: 12
   player: {fileID: 1434495054}
   spawnDistance: 10
+  despawnDistance: 30
   spawnInterval: 1.5
-  laneOffset: 2
   numberOfLanes: 4
+  laneOffset: 2
 --- !u!1001 &2700240733157760188
 PrefabInstance:
   m_ObjectHideFlags: 0
