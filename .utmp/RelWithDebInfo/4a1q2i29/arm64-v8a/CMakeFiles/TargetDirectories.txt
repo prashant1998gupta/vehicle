@@ -1,0 +1,5 @@
+C:/Users/user/wkspaces/Vehicle testing/.utmp/RelWithDebInfo/4a1q2i29/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/user/wkspaces/Vehicle testing/.utmp/RelWithDebInfo/4a1q2i29/arm64-v8a/CMakeFiles/rebuild_cache.dir
+C:/Users/user/wkspaces/Vehicle testing/.utmp/RelWithDebInfo/4a1q2i29/arm64-v8a/GameActivity/CMakeFiles/game.dir
+C:/Users/user/wkspaces/Vehicle testing/.utmp/RelWithDebInfo/4a1q2i29/arm64-v8a/GameActivity/CMakeFiles/edit_cache.dir
+C:/Users/user/wkspaces/Vehicle testing/.utmp/RelWithDebInfo/4a1q2i29/arm64-v8a/GameActivity/CMakeFiles/rebuild_cache.dir
