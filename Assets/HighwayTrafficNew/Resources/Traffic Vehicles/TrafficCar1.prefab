@@ -523,13 +523,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bodyCollider: {fileID: 0}
   changingLines: 0
-  maximumSpeed: 10
+  maximumSpeed: 20
   distance: 0
-  wheelModels: []
-  headLights: []
-  brakeLights: []
-  signalLights: []
-  engineSound: {fileID: 0}
+  wheelModels:
+  - {fileID: 460646}
+  - {fileID: 488924}
+  - {fileID: 497608}
+  - {fileID: 406436}
+  headLights:
+  - {fileID: 8980991750552415396}
+  - {fileID: 2330730640135625906}
+  brakeLights:
+  - {fileID: 5954846719566536279}
+  - {fileID: 532643199716487841}
+  signalLights:
+  - {fileID: 8751043658039507815}
+  - {fileID: 652979483473602496}
+  - {fileID: 1563986285835141114}
+  - {fileID: 820206754636077207}
+  engineSound: {fileID: 8300000, guid: e1e40086a6327bc49bd68247f9f697bf, type: 3}
+  trafficCarsLayer:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!54 &5428456
 Rigidbody:
   m_ObjectHideFlags: 0

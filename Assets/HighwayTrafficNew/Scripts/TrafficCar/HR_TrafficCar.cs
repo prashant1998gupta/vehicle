@@ -78,8 +78,10 @@ public class HR_TrafficCar : MonoBehaviour {
 
 	public AudioClip engineSound;
 	private AudioSource engineSoundSource;
-	
-	void Awake () {
+
+    public LayerMask trafficCarsLayer;
+
+    void Awake () {
 
 		rigid = GetComponent<Rigidbody>();
 		rigid.linearDamping = 1f;
@@ -130,7 +132,7 @@ public class HR_TrafficCar : MonoBehaviour {
 		Transform[] allTransforms = GetComponentsInChildren<Transform>();
 
 		foreach (Transform t in allTransforms) {
-			t.gameObject.layer = (int)Mathf.Log (HR_HighwayRacerProperties.Instance.trafficCarsLayer.value, 2);
+			t.gameObject.layer = (int)Mathf.Log (trafficCarsLayer.value, 2);
 		}
 
 		triggerCollider.gameObject.layer = LayerMask.NameToLayer("TrafficCarVolume");
