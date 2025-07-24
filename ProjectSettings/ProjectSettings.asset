@@ -821,7 +821,13 @@ PlayerSettings:
   webWasm2023: 0
   webEnableSubmoduleStrippingCompatibility: 0
   scriptingDefineSymbols:
-    Android: EMS_URP_On
+    Android: EMS_URP_On;BCG_RCC
+    PS4: BCG_RCC
+    Standalone: BCG_RCC
+    WebGL: BCG_RCC
+    XboxOne: BCG_RCC
+    iPhone: BCG_RCC
+    tvOS: BCG_RCC
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:
