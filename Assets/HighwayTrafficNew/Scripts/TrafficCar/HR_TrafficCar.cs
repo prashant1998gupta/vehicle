@@ -271,10 +271,12 @@ public class HR_TrafficCar : MonoBehaviour {
 		else
 			brakingOn = false;
 
-	/*	if(!immobilized && HR_GamePlayHandler.mode != HR_GamePlayHandler.Mode.TwoWay)
-		transform.rotation = Quaternion.Lerp(transform.rotation, steeringAngle, Time.fixedDeltaTime * 3f);*/
+        /*	if(!immobilized && HR_GamePlayHandler.mode != HR_GamePlayHandler.Mode.TwoWay)
+            transform.rotation = Quaternion.Lerp(transform.rotation, steeringAngle, Time.fixedDeltaTime * 3f);*/
 
-		rigid.linearVelocity = Vector3.Slerp(rigid.linearVelocity, transform.forward * desiredSpeed, Time.fixedDeltaTime * 3f);
+        transform.rotation = Quaternion.Lerp(transform.rotation, steeringAngle, Time.fixedDeltaTime * 3f);
+
+        rigid.linearVelocity = Vector3.Slerp(rigid.linearVelocity, transform.forward * desiredSpeed, Time.fixedDeltaTime * 3f);
 		rigid.angularVelocity = Vector3.Slerp(rigid.angularVelocity, Vector3.zero, Time.fixedDeltaTime * 10f);
 
 		/*if(!immobilized && HR_GamePlayHandler.mode != HR_GamePlayHandler.Mode.TwoWay){
@@ -369,7 +371,7 @@ public class HR_TrafficCar : MonoBehaviour {
 
 	void OnTriggerStay(Collider col){
 
-		if((1 << col.gameObject.layer) != HR_HighwayRacerProperties.Instance.trafficCarsLayer.value || col.isTrigger)
+		if((1 << col.gameObject.layer) != trafficCarsLayer.value || col.isTrigger)
 			return;
 
 		distance = Vector3.Distance(transform.position, col.transform.position);
@@ -378,7 +380,7 @@ public class HR_TrafficCar : MonoBehaviour {
 
 	void OnTriggerExit(Collider col){
 
-		if((1 << col.gameObject.layer) != HR_HighwayRacerProperties.Instance.trafficCarsLayer.value)
+		if((1 << col.gameObject.layer) != trafficCarsLayer.value)
 			return;
 
 	}
