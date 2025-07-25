@@ -823,7 +823,7 @@ PlayerSettings:
   scriptingDefineSymbols:
     Android: EMS_URP_On;BCG_RCC
     PS4: BCG_RCC
-    Standalone: BCG_RCC
+    Standalone: BCG_RCC;EMS_URP_On
     WebGL: BCG_RCC
     XboxOne: BCG_RCC
     iPhone: BCG_RCC
