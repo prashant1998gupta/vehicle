@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+[RequireComponent(typeof(Camera))]
 public class HR_CarCamera : MonoBehaviour
 {
     public enum CameraMode { Top, TPS, FPS }
@@ -26,30 +27,23 @@ public class HR_CarCamera : MonoBehaviour
 
     private Vector3 targetPosition;
     private Vector3 pastFollowerPosition, pastTargetPosition;
-    private float targetFOV = 50f;
-    private float speed = 0f;
+    private float targetFOV;
+    private float speed;
     private float currentT, oldT;
-    private int cameraSwitchCount = 0;
+    private int cameraSwitchCount;
 
-    private void Start()
+    private void Awake()
     {
         cam = GetComponent<Camera>();
-        transform.position = new Vector3(2f, 1f, 55f);
-        transform.rotation = Quaternion.Euler(0f, -40f, 0f);
 
-        // Remove default audio listener
-        if (GetComponent<AudioListener>())
-            Destroy(GetComponent<AudioListener>());
+        // Remove existing AudioListener
+        if (TryGetComponent(out AudioListener listener))
+            Destroy(listener);
 
-        // Add external audio listener
+        // Add new AudioListener on a child object
         audioListener = new GameObject("Audio Listener");
         audioListener.transform.SetParent(transform, false);
         audioListener.AddComponent<AudioListener>();
-    }
-
-    private void Update()
-    {
-       
     }
 
     private void LateUpdate()
@@ -60,15 +54,13 @@ public class HR_CarCamera : MonoBehaviour
             return;
         }
 
-        if (!cam)
-            cam = GetComponent<Camera>();
+        if (playerRigid == null && playerCar.TryGetComponent(out Rigidbody rb))
+            playerRigid = rb;
 
-        if (playerRigid != playerCar.GetComponent<Rigidbody>())
-            playerRigid = playerCar.GetComponent<Rigidbody>();
-
-        // Smooth FOV
+        // Smooth FOV transition
         cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, targetFOV, Time.deltaTime * 3f);
 
+        // Choose camera mode
         switch (cameraMode)
         {
             case CameraMode.Top:
@@ -81,59 +73,54 @@ public class HR_CarCamera : MonoBehaviour
 
         transform.position = targetPosition;
 
-        // Audio listener follows only X from car
+        // Audio Listener tracks car's X axis only
         audioListener.transform.position = new Vector3(playerCar.position.x, transform.position.y, transform.position.z);
 
-        // Store for smooth lerp
+        // Store for smooth lerping
         pastFollowerPosition = transform.position;
         pastTargetPosition = targetPosition;
 
-        currentT = (transform.position.z - oldT);
+        currentT = transform.position.z - oldT;
         oldT = transform.position.z;
     }
 
     private void FixedUpdate()
     {
-        if (!playerRigid)
-            return;
+        if (!playerRigid) return;
 
-        speed = Mathf.Lerp(speed, playerRigid.linearVelocity.magnitude * 3.6f, Time.deltaTime * 1.5f);
+        // Updated to use linearVelocity instead of the obsolete velocity property
+        speed = Mathf.Lerp(speed, playerRigid.linearVelocity.magnitude * 3.6f, Time.fixedDeltaTime * 1.5f);
     }
 
     public void ChangeCamera()
     {
-        cameraSwitchCount++;
-        if (cameraSwitchCount >= 3)
-            cameraSwitchCount = 0;
-
+        cameraSwitchCount = (cameraSwitchCount + 1) % 3;
         cameraMode = (CameraMode)cameraSwitchCount;
-    }
-
-    private void SwitchToNextCamera()
-    {
-        cameraSwitchCount++;
-        ChangeCamera();
     }
 
     private void TryAssignPlayer()
     {
-      
+        // TODO: Add your player assignment logic here (e.g., find by tag)
+        Debug.LogWarning("HR_CarCamera: Player car not assigned.");
     }
 
     private void TopCamera()
     {
-        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(topRotation, 0f, 0f), Time.deltaTime * 2f);
+        Quaternion targetRot = Quaternion.Euler(topRotation, 0f, 0f);
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRot, Time.deltaTime * 2f);
 
-        targetPosition = new Vector3(0f, playerCar.position.y, playerCar.position.z);
-        targetPosition -= transform.rotation * Vector3.forward * topDistance;
-        targetPosition = new Vector3(targetPosition.x, topHeight, targetPosition.z);
+        Vector3 carPos = playerCar.position;
+        targetPosition = new Vector3(0f, carPos.y, carPos.z) - targetRot * Vector3.forward * topDistance;
+        targetPosition.y = topHeight;
 
         if (Time.timeSinceLevelLoad < 3f)
-            transform.position = SmoothApproach(pastFollowerPosition, pastTargetPosition, targetPosition, (speed / 2f) * Mathf.Clamp(Time.timeSinceLevelLoad - 1.5f, 0f, 10f));
+        {
+            float smoothFactor = (speed / 2f) * Mathf.Clamp(Time.timeSinceLevelLoad - 1.5f, 0f, 10f);
+            transform.position = SmoothApproach(pastFollowerPosition, pastTargetPosition, targetPosition, smoothFactor);
+        }
 
         targetFOV = topFOV;
     }
-
 
     private Vector3 SmoothApproach(Vector3 pastPos, Vector3 pastTarget, Vector3 targetPos, float delta)
     {
@@ -146,13 +133,6 @@ public class HR_CarCamera : MonoBehaviour
         Vector3 f = pastPos - pastTarget + v;
         Vector3 l = targetPos - v + f * Mathf.Exp(-t);
 
-#if UNITY_2017_1_OR_NEWER
-        if (l != Vector3.negativeInfinity && l != Vector3.positiveInfinity && l != Vector3.zero)
-            return l;
-        else
-            return transform.position;
-#else
-        return l;
-#endif
+        return (l != Vector3.negativeInfinity && l != Vector3.positiveInfinity && l != Vector3.zero) ? l : transform.position;
     }
 }

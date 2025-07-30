@@ -20,8 +20,9 @@ public class HR_RoadPooling : MonoBehaviour {
 
 	[Header("Use This Layer On Road For Calculating Road Length")] public LayerMask asphaltLayer;
 	
-	[Header("Pooling Road Objects. Select Them While They Are On Your Scene")] public RoadObjects[] roadObjects;
-	internal List<GameObject> roads = new List<GameObject>();
+	[Header("Pooling Road Objects. Select Them While They Are On Your Scene")] 
+	public RoadObjects[] roadObjects;
+	public List<GameObject> roads = new List<GameObject>();
 
 	public float roadWidth = 13.5f;
 	private int index = 0;
@@ -57,7 +58,8 @@ public class HR_RoadPooling : MonoBehaviour {
 		}
 		
 		Destroy(roadReference);
-		return combinedBounds.size.z;
+		Debug.Log("Road Length: " + combinedBounds.size.z + " for road index: " + roadIndex);
+        return combinedBounds.size.z;
 		
 	}
 	
@@ -95,7 +97,8 @@ public class HR_RoadPooling : MonoBehaviour {
 
 		for (int j = 0; j < roadObjects.Length; j++) {
 
-			if(roadObjects[j].roadObject.activeSelf)
+			//Debug.Log($"Deactivating Road Object: {roadObjects[j].roadObject.name} and roadObjects[j].roadObject.activeSelf {roadObjects[j].roadObject.activeSelf}");
+            if (roadObjects[j].roadObject.activeSelf)
 				roadObjects[j].roadObject.SetActive(false);
 
 		}
@@ -107,7 +110,10 @@ public class HR_RoadPooling : MonoBehaviour {
 	void Update(){
 		
 		if(animateNow)
-			AnimateRoads();
+		{
+			Debug.Log("Animating Roads");
+            AnimateRoads();
+		}
 		
 	}
 	
