@@ -22,7 +22,7 @@ public class HR_RoadPooling : MonoBehaviour {
 	
 	[Header("Pooling Road Objects. Select Them While They Are On Your Scene")] 
 	public RoadObjects[] roadObjects;
-	public List<GameObject> roads = new List<GameObject>();
+	internal List<GameObject> roads = new List<GameObject>();
 
 	public float roadWidth = 13.5f;
 	private int index = 0;
@@ -97,7 +97,7 @@ public class HR_RoadPooling : MonoBehaviour {
 
 		for (int j = 0; j < roadObjects.Length; j++) {
 
-			//Debug.Log($"Deactivating Road Object: {roadObjects[j].roadObject.name} and roadObjects[j].roadObject.activeSelf {roadObjects[j].roadObject.activeSelf}");
+			Debug.Log($"Deactivating Road Object: {roadObjects[j].roadObject.name} and roadObjects[j].roadObject.activeSelf {roadObjects[j].roadObject.activeSelf}");
             if (roadObjects[j].roadObject.activeSelf)
 				roadObjects[j].roadObject.SetActive(false);
 
@@ -111,7 +111,6 @@ public class HR_RoadPooling : MonoBehaviour {
 		
 		if(animateNow)
 		{
-			Debug.Log("Animating Roads");
             AnimateRoads();
 		}
 		
@@ -120,15 +119,24 @@ public class HR_RoadPooling : MonoBehaviour {
 	void AnimateRoads () {
 		
 		for (int i = 0; i < roads.Count; i++) {
-			
-			if(reference.transform.position.z > (roads[i].transform.position.z + (roadLength[index] * 2f))){
+
+
+            if (reference.transform.position.z > (roads[i].transform.position.z + (roadLength[index] * 2f))){
 				roads[i].transform.position = new Vector3(0f, roads[i].transform.position.y, (roads[i].transform.position.z + (roadLength[index] * roads.Count)));
-			}
+
+                Debug.Log($"roads[i].transform.position {roads[i].transform.position}");
+
+            }
 			
 			index ++;
+
+            Debug.Log($"Animating Roads index ++; {index}");
 			
 			if(index >= roadObjects.Length)
-				index = 0;
+			{
+                Debug.Log($"roadObjects.Length {roadObjects.Length} index >= roadObjects.Length {index >= roadObjects.Length}");
+                index = 0;
+			}
 			
 		}
 		
