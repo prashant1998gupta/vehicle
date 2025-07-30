@@ -1,12 +1,4 @@
-﻿//----------------------------------------------
-//           	   Highway Racer
-//
-// Copyright © 2014 - 2021 BoneCracker Games
-// http://www.bonecrackergames.com
-//
-//----------------------------------------------
-
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -27,11 +19,7 @@ public class HR_TrafficPooling : MonoBehaviour {
 
 	public Transform[] lines;
 
-	/*private bool animateNow{
-		get{
-			return HR_GamePlayHandler.Instance.gameStarted;
-		}
-	}*/
+	private bool animateNow;
 
 	public TrafficCars[] trafficCars;
 
@@ -47,17 +35,25 @@ public class HR_TrafficPooling : MonoBehaviour {
 
 		reference = Camera.main.transform;
 		CreateTraffic();
+        StartCoroutine(WaitForGameStart());
 
-	}
+    }
 
 	void Update(){
 
-		//if(animateNow)
+		if(animateNow)
 			AnimateTraffic();
 
 	}
 
-	void CreateTraffic () {
+    IEnumerator WaitForGameStart()
+    {
+        yield return new WaitForSeconds(4);
+        animateNow = true;
+
+    }
+
+    void CreateTraffic () {
 		
 		for (int i = 0; i < trafficCars.Length; i++) {
 
@@ -96,6 +92,7 @@ public class HR_TrafficPooling : MonoBehaviour {
 		realignableObject.transform.position = new Vector3(lines[randomLine].position.x, lines[randomLine].position.y, (reference.transform.position.z + (Random.Range(100, 300))));
 
 	    realignableObject.transform.rotation = Quaternion.identity;
+
 		/*switch(HR_GamePlayHandler.Instance.mode){
 
 		case(HR_GamePlayHandler.Mode.OneWay):

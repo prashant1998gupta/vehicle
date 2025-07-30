@@ -1,12 +1,4 @@
-﻿//----------------------------------------------
-//           	   Highway Racer
-//
-// Copyright © 2014 - 2021 BoneCracker Games
-// http://www.bonecrackergames.com
-//
-//----------------------------------------------
-
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 public static class HR_BoundsExtension{
