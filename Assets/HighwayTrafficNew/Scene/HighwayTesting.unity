@@ -375,11 +375,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 495806, guid: 1585d80c986c36d49bc35a377f3826fc, type: 3}
   m_PrefabInstance: {fileID: 829063584}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &829063586 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 179096, guid: 1585d80c986c36d49bc35a377f3826fc, type: 3}
-  m_PrefabInstance: {fileID: 829063584}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &838913386
 GameObject:
   m_ObjectHideFlags: 0
@@ -637,15 +632,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f50d3f40db10fcb48b5a68971708bf9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roadAmountInPool: 10
-  automaticRoadLength: 1
+  roadPrefabs:
+  - roadObject: {fileID: 179096, guid: 1585d80c986c36d49bc35a377f3826fc, type: 3}
+  poolSize: 15
+  useAutomaticLength: 0
   manualRoadLength: 60
   asphaltLayer:
     serializedVersion: 2
     m_Bits: 2048
-  roadObjects:
-  - roadObject: {fileID: 829063586}
-  roadWidth: 13.5
 --- !u!4 &1645328756455594487
 Transform:
   m_ObjectHideFlags: 0

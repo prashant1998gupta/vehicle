@@ -1,152 +1,178 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
-public class HR_RoadPooling : MonoBehaviour {
-	
-	private Transform reference;
-	private bool animateNow = true;
-	
-	[System.Serializable]
-	public class RoadObjects{
-		public GameObject roadObject;
-	}
-	
-	public int roadAmountInPool = 10;
-	private float[] roadLength;
+public class HR_RoadPooling : MonoBehaviour
+{
+    [System.Serializable]
+    public class RoadPrefab
+    {
+        public GameObject roadObject;
+    }
 
-	public bool automaticRoadLength = true;
-	public float manualRoadLength = 60f;
+    public RoadPrefab[] roadPrefabs;
+    public int poolSize = 20;
+    public bool useAutomaticLength = true;
+    public float manualRoadLength = 60f;
+    public LayerMask asphaltLayer;
 
-	[Header("Use This Layer On Road For Calculating Road Length")] public LayerMask asphaltLayer;
-	
-	[Header("Pooling Road Objects. Select Them While They Are On Your Scene")] 
-	public RoadObjects[] roadObjects;
-	internal List<GameObject> roads = new List<GameObject>();
+    private float roadLength;
+    private List<GameObject> roadPool = new List<GameObject>();
+    private Transform player;
 
-	public float roadWidth = 13.5f;
-	private int index = 0;
-	
-	void Awake () {
+    private float playerZLastFrame;
 
-		reference = Camera.main.transform;
-		roadLength = new float[roadObjects.Length];
-		
-		for (int i = 0; i < roadObjects.Length; i++) {
-			
-			if(automaticRoadLength)
-				roadLength[i] = GetRoadLength(i);	
-			else
-				roadLength[i] = manualRoadLength;	
-			
-		}
-		
-		CreateRoads();
-		
-	}
-	
-	protected float GetRoadLength (int roadIndex){
-		
-		GameObject roadReference = (GameObject)GameObject.Instantiate(roadObjects[roadIndex].roadObject, Vector3.zero, Quaternion.identity);
-		
-		Bounds combinedBounds = roadReference.GetComponentInChildren<Renderer>().bounds;
-		Renderer[] renderers = roadReference.GetComponentsInChildren<Renderer>();
-		
-		foreach (Renderer render in renderers) {
-			if (render != roadReference.GetComponent<Renderer>() && 1 << render.gameObject.layer == asphaltLayer)
-				combinedBounds.Encapsulate(render.bounds);
-		}
-		
-		Destroy(roadReference);
-		Debug.Log("Road Length: " + combinedBounds.size.z + " for road index: " + roadIndex);
-        return combinedBounds.size.z;
-		
-	}
-	
-	void CreateRoads () {
-		
-		GameObject allRoads = new GameObject("All Roads");
-		allRoads.transform.position = Vector3.zero;
-		allRoads.transform.rotation = Quaternion.identity;
-		
-		for (int i = 0; i < roadAmountInPool; i++) {
-			
-			for (int k = 0; k < roadObjects.Length; k++) {
-				
-				GameObject go = (GameObject)GameObject.Instantiate(roadObjects[k].roadObject, roadObjects[k].roadObject.transform.position, roadObjects[k].roadObject.transform.rotation);
-				go.isStatic = false;
-				roads.Add(go);
-				HR_SetLightmapsManually.Instance.AlignLightmaps(roadObjects[k].roadObject, go);
-				go.transform.SetParent(allRoads.transform);
-				
-			}
+    private float forwardZ;
+    private float backwardZ;
 
-		}
-		
-		for (int i = 0; i < roads.Count; i++) {
-			
-			if(i != 0)
-				roads[i].transform.position = new Vector3(0f, roads[i].transform.position.y, roads[i - 1].transform.position.z + roadLength[(index <= 0) ? roadObjects.Length - 1 : index - 1]);
-			
-			index ++;
-			
-			if(index >= roadObjects.Length)
-				index = 0;
-			
-		}
+    private void Awake()
+    {
+        player = Camera.main.transform;
+        roadLength = useAutomaticLength ? CalculateRoadLength(roadPrefabs[0].roadObject) : manualRoadLength;
 
-		for (int j = 0; j < roadObjects.Length; j++) {
+        CreatePool();
 
-			Debug.Log($"Deactivating Road Object: {roadObjects[j].roadObject.name} and roadObjects[j].roadObject.activeSelf {roadObjects[j].roadObject.activeSelf}");
-            if (roadObjects[j].roadObject.activeSelf)
-				roadObjects[j].roadObject.SetActive(false);
+        // Place initial roads centered around the player
+        float startZ = player.position.z - (roadLength * poolSize / 2f);
+        for (int i = 0; i < roadPool.Count; i++)
+        {
+            roadPool[i].transform.position = new Vector3(0f, 0f, startZ + i * roadLength);
+            roadPool[i].SetActive(true);
+        }
 
-		}
-		
-		index = 0;
-		
-	}
-	
-	void Update(){
-		
-		if(animateNow)
-		{
-            AnimateRoads();
-		}
-		
-	}
-	
-	void AnimateRoads () {
-		
-		for (int i = 0; i < roads.Count; i++) {
+        playerZLastFrame = player.position.z;
+    }
 
+ /*   private void Update()
+    {
+        float playerZ = player.position.z;
+        float direction = Mathf.Sign(playerZ - playerZLastFrame);
 
-            if (reference.transform.position.z > (roads[i].transform.position.z + (roadLength[index] * 2f))){
-				roads[i].transform.position = new Vector3(0f, roads[i].transform.position.y, (roads[i].transform.position.z + (roadLength[index] * roads.Count)));
+        for (int i = 0; i < roadPool.Count; i++)
+        {
+            GameObject road = roadPool[i];
+            float distanceFromPlayer = Mathf.Abs(road.transform.position.z - playerZ);
 
-                Debug.Log($"roads[i].transform.position {roads[i].transform.position}");
-
+            if (distanceFromPlayer > roadLength * poolSize / 2f)
+            {
+                // Move road in front or behind depending on direction
+                float newZ = playerZ + direction * (roadLength * poolSize / 2f);
+                road.transform.position = new Vector3(0f, 0f, newZ);
             }
-			
-			index ++;
+        }
 
-            Debug.Log($"Animating Roads index ++; {index}");
-			
-			if(index >= roadObjects.Length)
-			{
-                Debug.Log($"roadObjects.Length {roadObjects.Length} index >= roadObjects.Length {index >= roadObjects.Length}");
-                index = 0;
-			}
-			
-		}
-		
-	}
-	
-	void OnDrawGizmos(){
-		
-		Gizmos.color = new Color(0f, 1f, 0f, .75f);
-		Gizmos.DrawCube(Vector3.zero, new Vector3(roadWidth * 3f, 1f, 10f));
-		
-	}
-	
+        playerZLastFrame = playerZ;
+    }*/
+
+    private void Update()
+    {
+        float playerZ = player.position.z;
+
+        // Spawn forward if needed
+        if (playerZ + (roadLength * (poolSize / 4f)) > forwardZ)
+        {
+            ReuseOldestRoad(forward: true);
+        }
+
+        // Spawn backward if needed
+        if (playerZ - (roadLength * (poolSize / 4f)) < backwardZ)
+        {
+            ReuseOldestRoad(forward: false);
+        }
+    }
+
+    private void ReuseOldestRoad(bool forward)
+    {
+        GameObject oldest = GetFarthestRoad(forward: !forward);
+        float newZ = forward ? forwardZ : backwardZ - roadLength;
+
+        oldest.transform.position = new Vector3(0f, 0f, newZ);
+
+        if (forward)
+            forwardZ += roadLength;
+        else
+            backwardZ -= roadLength;
+    }
+
+
+
+    private void CreatePool()
+    {
+        GameObject allRoads = new GameObject("All Roads");
+
+        for (int i = 0; i < poolSize; i++)
+        {
+            GameObject prefab = roadPrefabs[Random.Range(0, roadPrefabs.Length)].roadObject;
+            GameObject go = Instantiate(prefab);
+            go.isStatic = false;
+            HR_SetLightmapsManually.Instance.AlignLightmaps(prefab, go);
+            go.transform.SetParent(allRoads.transform);
+            roadPool.Add(go);
+        }
+
+        foreach (var r in roadPrefabs)
+        {
+            r.roadObject.SetActive(false); // deactivate template
+        }
+
+        // Initial road layout (centered around player)
+        float playerZ = player.position.z;
+        float half = poolSize / 2;
+
+        forwardZ = playerZ;
+        backwardZ = playerZ;
+
+        for (int i = 0; i < poolSize; i++)
+        {
+            GameObject road = roadPool[i];
+            float z = playerZ + (i - half) * roadLength;
+            road.transform.position = new Vector3(0f, 0f, z);
+            road.SetActive(true);
+        }
+
+        forwardZ = playerZ + ((half) * roadLength);
+        backwardZ = playerZ - ((half) * roadLength);
+
+    }
+
+    private GameObject GetFarthestRoad(bool forward)
+    {
+        GameObject selected = roadPool[0];
+        foreach (var road in roadPool)
+        {
+            if (forward)
+            {
+                if (road.transform.position.z > selected.transform.position.z)
+                    selected = road;
+            }
+            else
+            {
+                if (road.transform.position.z < selected.transform.position.z)
+                    selected = road;
+            }
+        }
+        return selected;
+    }
+
+
+    private float CalculateRoadLength(GameObject roadObj)
+    {
+        GameObject temp = Instantiate(roadObj, Vector3.zero, Quaternion.identity);
+        Bounds bounds = temp.GetComponentInChildren<Renderer>().bounds;
+
+        foreach (Renderer r in temp.GetComponentsInChildren<Renderer>())
+        {
+            if ((1 << r.gameObject.layer & asphaltLayer.value) != 0)
+                bounds.Encapsulate(r.bounds);
+        }
+
+        float length = bounds.size.z;
+        Destroy(temp);
+        return length;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawCube(Vector3.zero, new Vector3(14f, 1f, roadLength));
+    }
 }
