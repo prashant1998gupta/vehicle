@@ -42,55 +42,47 @@ public class HR_RoadPooling : MonoBehaviour
         playerZLastFrame = player.position.z;
     }
 
- /*   private void Update()
-    {
-        float playerZ = player.position.z;
-        float direction = Mathf.Sign(playerZ - playerZLastFrame);
-
-        for (int i = 0; i < roadPool.Count; i++)
-        {
-            GameObject road = roadPool[i];
-            float distanceFromPlayer = Mathf.Abs(road.transform.position.z - playerZ);
-
-            if (distanceFromPlayer > roadLength * poolSize / 2f)
-            {
-                // Move road in front or behind depending on direction
-                float newZ = playerZ + direction * (roadLength * poolSize / 2f);
-                road.transform.position = new Vector3(0f, 0f, newZ);
-            }
-        }
-
-        playerZLastFrame = playerZ;
-    }*/
-
     private void Update()
     {
         float playerZ = player.position.z;
+        float minZ = GetMinRoadZ();
+        float maxZ = GetMaxRoadZ();
 
-        // Spawn forward if needed
-        if (playerZ + (roadLength * (poolSize / 4f)) > forwardZ)
+        // When close to the front, extend forward
+        if (playerZ + roadLength * (poolSize / 4f) > maxZ)
         {
-            ReuseOldestRoad(forward: true);
+            ReuseOldestRoad(forward: true, newZ: maxZ + roadLength);
         }
 
-        // Spawn backward if needed
-        if (playerZ - (roadLength * (poolSize / 4f)) < backwardZ)
+        // When close to the back, extend backward
+        if (playerZ - roadLength * (poolSize / 4f) < minZ)
         {
-            ReuseOldestRoad(forward: false);
+            ReuseOldestRoad(forward: false, newZ: minZ - roadLength);
         }
     }
 
-    private void ReuseOldestRoad(bool forward)
+
+    private float GetMinRoadZ()
     {
-        GameObject oldest = GetFarthestRoad(forward: !forward);
-        float newZ = forward ? forwardZ : backwardZ - roadLength;
+        float min = float.MaxValue;
+        foreach (var r in roadPool)
+            min = Mathf.Min(min, r.transform.position.z);
+        return min;
+    }
 
-        oldest.transform.position = new Vector3(0f, 0f, newZ);
+    private float GetMaxRoadZ()
+    {
+        float max = float.MinValue;
+        foreach (var r in roadPool)
+            max = Mathf.Max(max, r.transform.position.z);
+        return max;
+    }
 
-        if (forward)
-            forwardZ += roadLength;
-        else
-            backwardZ -= roadLength;
+
+    private void ReuseOldestRoad(bool forward, float newZ)
+    {
+        GameObject road = GetFarthestRoad(forward: !forward);
+        road.transform.position = new Vector3(0f, 0f, newZ);
     }
 
 
@@ -104,7 +96,6 @@ public class HR_RoadPooling : MonoBehaviour
             GameObject prefab = roadPrefabs[Random.Range(0, roadPrefabs.Length)].roadObject;
             GameObject go = Instantiate(prefab);
             go.isStatic = false;
-            HR_SetLightmapsManually.Instance.AlignLightmaps(prefab, go);
             go.transform.SetParent(allRoads.transform);
             roadPool.Add(go);
         }
