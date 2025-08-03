@@ -42,24 +42,59 @@ public class HR_RoadPooling : MonoBehaviour
         playerZLastFrame = player.position.z;
     }
 
-    private void Update()
+    #region it you want to use update than use this region
+    //private void Update()
+    //{
+    //    float playerZ = player.position.z;
+    //    float minZ = GetMinRoadZ();
+    //    float maxZ = GetMaxRoadZ();
+
+    //    // When close to the front, extend forward
+    //    if (playerZ + roadLength * (poolSize / 4f) > maxZ)
+    //    {
+    //        ReuseOldestRoad(forward: true, newZ: maxZ + roadLength);
+    //    }
+
+    //    // When close to the back, extend backward
+    //    if (playerZ - roadLength * (poolSize / 4f) < minZ)
+    //    {
+    //        ReuseOldestRoad(forward: false, newZ: minZ - roadLength);
+    //    }
+    //}
+    #endregion
+
+    #region it you want to use fixupdate than use this region
+    private float checkThreshold = 30f;
+    private float lastCheckedZ = float.MinValue;
+
+    private void FixedUpdate()
     {
         float playerZ = player.position.z;
+
+        // Only check if the player has moved enough in Z
+        if (Mathf.Abs(playerZ - lastCheckedZ) >= checkThreshold)
+        {
+            TryExtendRoads(playerZ);
+            lastCheckedZ = playerZ;
+        }
+    }
+
+    private void TryExtendRoads(float playerZ)
+    {
         float minZ = GetMinRoadZ();
         float maxZ = GetMaxRoadZ();
 
-        // When close to the front, extend forward
         if (playerZ + roadLength * (poolSize / 4f) > maxZ)
         {
             ReuseOldestRoad(forward: true, newZ: maxZ + roadLength);
         }
 
-        // When close to the back, extend backward
         if (playerZ - roadLength * (poolSize / 4f) < minZ)
         {
             ReuseOldestRoad(forward: false, newZ: minZ - roadLength);
         }
     }
+    #endregion
 
 
     private float GetMinRoadZ()
