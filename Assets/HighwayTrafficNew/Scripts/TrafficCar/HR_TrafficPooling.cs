@@ -33,7 +33,7 @@ public class HR_TrafficPooling : MonoBehaviour {
 
 	void Start () {
 
-		reference = Camera.main.transform;
+		reference = GameObject.FindWithTag("Player").transform;
 		CreateTraffic();
         StartCoroutine(WaitForGameStart());
 

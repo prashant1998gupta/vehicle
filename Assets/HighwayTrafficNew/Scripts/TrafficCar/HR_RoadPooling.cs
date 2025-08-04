@@ -26,7 +26,7 @@ public class HR_RoadPooling : MonoBehaviour
 
     private void Awake()
     {
-        player = Camera.main.transform;
+        player = GameObject.FindWithTag("Player").transform;
         roadLength = useAutomaticLength ? CalculateRoadLength(roadPrefabs[0].roadObject) : manualRoadLength;
 
         CreatePool();
