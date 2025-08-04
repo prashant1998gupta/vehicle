@@ -84,13 +84,19 @@ public class HR_RoadPooling : MonoBehaviour
         float minZ = GetMinRoadZ();
         float maxZ = GetMaxRoadZ();
 
-        if (playerZ + roadLength * (poolSize / 4f) > maxZ)
+        //Debug.Log($"Player Z: {playerZ}, Min Z: {minZ}, Max Z: {maxZ}");
+
+        if (playerZ + roadLength * (poolSize / 3f) > maxZ)
         {
+            //Debug.Log($"Player Z: {playerZ}, playerZ + roadLength * (poolSize / 4f): {playerZ + roadLength * (poolSize / 5f)}");
+
             ReuseOldestRoad(forward: true, newZ: maxZ + roadLength);
         }
 
-        if (playerZ - roadLength * (poolSize / 4f) < minZ)
+        if (playerZ - roadLength * (poolSize / 3f) < minZ)
         {
+            //Debug.Log($"Player Z: {playerZ}, playerZ - roadLength * (poolSize / 4f): {playerZ - roadLength * (poolSize / 5f)}");
+
             ReuseOldestRoad(forward: false, newZ: minZ - roadLength);
         }
     }

@@ -461,6 +461,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Highway RoadGroup
       objectReference: {fileID: 0}
+    - target: {fileID: 179096, guid: 1585d80c986c36d49bc35a377f3826fc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 495806, guid: 1585d80c986c36d49bc35a377f3826fc, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -770,7 +774,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   roadPrefabs:
   - roadObject: {fileID: 179096, guid: 1585d80c986c36d49bc35a377f3826fc, type: 3}
-  poolSize: 15
+  poolSize: 20
   useAutomaticLength: 0
   manualRoadLength: 60
   asphaltLayer:
