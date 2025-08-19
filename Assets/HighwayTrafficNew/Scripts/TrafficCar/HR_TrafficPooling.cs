@@ -23,7 +23,10 @@ public class HR_TrafficPooling : MonoBehaviour {
 
 	public TrafficCars[] trafficCars;
 
-	[System.Serializable]
+    public float spawnBehindDistance = 150f;
+    public float spawnAheadDistance = 250f;
+
+    [System.Serializable]
 	public class TrafficCars{
 		public GameObject trafficCar;
 		public int frequence = 1;
@@ -70,7 +73,7 @@ public class HR_TrafficPooling : MonoBehaviour {
 		
 	}
 
-	void AnimateTraffic () {
+    /*void AnimateTraffic () {
 		
 		for (int i = 0; i < _trafficCars.Count; i++) {
 			
@@ -79,9 +82,24 @@ public class HR_TrafficPooling : MonoBehaviour {
 			
 		}
 		
-	}
+	}*/
 
-	void ReAlignTraffic(HR_TrafficCar realignableObject){
+    void AnimateTraffic()
+    {
+        float playerZ = reference.position.z;
+
+        for (int i = 0; i < _trafficCars.Count; i++)
+        {
+            float carZ = _trafficCars[i].transform.position.z;
+
+            if (carZ > playerZ + spawnAheadDistance || carZ < playerZ - spawnBehindDistance)
+            {
+                ReAlignTraffic(_trafficCars[i]);
+            }
+        }
+    }
+
+    void ReAlignTraffic1(HR_TrafficCar realignableObject){
 
 		if(!realignableObject.gameObject.activeSelf)
 			realignableObject.gameObject.SetActive(true);
@@ -89,9 +107,22 @@ public class HR_TrafficPooling : MonoBehaviour {
 		int randomLine = Random.Range(0, lines.Length );
 
 		realignableObject.currentLine = randomLine;
-		realignableObject.transform.position = new Vector3(lines[randomLine].position.x, lines[randomLine].position.y, (reference.transform.position.z + (Random.Range(100, 300))));
+		//realignableObject.transform.position = new Vector3(lines[randomLine].position.x, lines[randomLine].position.y, (reference.transform.position.z + (Random.Range(100, 300))));
 
-	    realignableObject.transform.rotation = Quaternion.identity;
+        // Define traffic spawn range relative to player
+        float minDistanceBehind = -150f; // how far behind player traffic can spawn
+        float maxDistanceAhead = 250f;   // how far ahead player traffic can spawn
+
+        float randomZ = reference.position.z + Random.Range(minDistanceBehind, maxDistanceAhead);
+
+        realignableObject.transform.position = new Vector3(
+            lines[randomLine].position.x,
+            lines[randomLine].position.y,
+            randomZ
+        );
+
+
+        realignableObject.transform.rotation = Quaternion.identity;
 
 		/*switch(HR_GamePlayHandler.Instance.mode){
 
@@ -120,7 +151,45 @@ public class HR_TrafficPooling : MonoBehaviour {
 
 	}
 
-	bool CheckIfClipping(BoxCollider trafficCarBound){
+    void ReAlignTraffic(HR_TrafficCar realignableObject)
+    {
+        if (!realignableObject.gameObject.activeSelf)
+            realignableObject.gameObject.SetActive(true);
+
+        int randomLine = Random.Range(0, lines.Length);
+        realignableObject.currentLine = randomLine;
+
+        float playerZ = reference.position.z;
+        float randomZ;
+
+        // 50/50 chance
+        if (Random.value < 0.5f)
+        {
+            // Spawn Ahead
+            randomZ = playerZ + Random.Range(20f, spawnAheadDistance);
+        }
+        else
+        {
+            // Spawn Behind
+            randomZ = playerZ - Random.Range(20f, spawnBehindDistance);
+        }
+
+        realignableObject.transform.position = new Vector3(
+            lines[randomLine].position.x,
+            lines[randomLine].position.y,
+            randomZ
+        );
+
+        realignableObject.transform.rotation = Quaternion.identity;
+
+        realignableObject.SendMessage("OnReAligned");
+
+        if (CheckIfClipping(realignableObject.triggerCollider))
+            realignableObject.gameObject.SetActive(false);
+    }
+
+
+    bool CheckIfClipping(BoxCollider trafficCarBound){
 
 		for (int i = 0; i < _trafficCars.Count; i++) {
 

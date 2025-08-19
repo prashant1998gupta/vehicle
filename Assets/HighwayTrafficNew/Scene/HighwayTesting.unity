@@ -598,15 +598,17 @@ MonoBehaviour:
   - {fileID: 2812799849768485727}
   trafficCars:
   - trafficCar: {fileID: 191730, guid: 4bb7e4a3e464adc41852df4fb38d93b9, type: 3}
-    frequence: 3
+    frequence: 5
   - trafficCar: {fileID: 165752, guid: 8d0a462e48b4734408f689737e376e4e, type: 3}
-    frequence: 3
+    frequence: 5
   - trafficCar: {fileID: 184800, guid: e7c350a76f84b3842ad3f1c01174135c, type: 3}
-    frequence: 3
+    frequence: 5
   - trafficCar: {fileID: 154232, guid: 63be2fe1509201a41906debf4a306ae0, type: 3}
-    frequence: 3
+    frequence: 5
   - trafficCar: {fileID: 181308, guid: 72de26588b133f54482c64faaf145b0f, type: 3}
-    frequence: 3
+    frequence: 5
+  spawnBehindDistance: 150
+  spawnAheadDistance: 250
 --- !u!1 &1565133315
 GameObject:
   m_ObjectHideFlags: 0
