@@ -4,21 +4,6 @@ using System.Collections;
 [RequireComponent (typeof(Rigidbody))]
 public class HR_TrafficCar : MonoBehaviour {
 
-	// Getting an Instance of HR_GamePlayHandler.
-	#region HR_GamePlayHandler Instance
-
-/*	private HR_GamePlayHandler HR_GamePlayHandlerInstance;
-	private HR_GamePlayHandler HR_GamePlayHandler {
-		get {
-			if (HR_GamePlayHandlerInstance == null) {
-				HR_GamePlayHandlerInstance = HR_GamePlayHandler.Instance;
-			}
-			return HR_GamePlayHandlerInstance;
-		}
-	}*/
-
-	#endregion
-
 	// Getting an Instance of HR_TrafficPooling.
 	#region HR_TrafficPooling Instance
 
