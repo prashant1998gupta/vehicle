@@ -163,16 +163,16 @@ public class HR_TrafficPooling : MonoBehaviour {
         float randomZ;
 
         // 50/50 chance
-        if (Random.value < 0.5f)
+        //if (Random.value < 0.5f)
         {
             // Spawn Ahead
-            randomZ = playerZ + Random.Range(20f, spawnAheadDistance);
+            randomZ = playerZ + Random.Range(150f, spawnAheadDistance);
         }
-        else
+       /* else
         {
             // Spawn Behind
             randomZ = playerZ - Random.Range(20f, spawnBehindDistance);
-        }
+        }*/
 
         realignableObject.transform.position = new Vector3(
             lines[randomLine].position.x,
